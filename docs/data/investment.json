@@ -1,0 +1,15 @@
+{
+  "updated": "2026-07-12",
+  "history": [
+    {
+      "date": "2026-07-10",
+      "unicharm": 943.0,
+      "unicharm_chg_pct": -1.87,
+      "metaplanet": 249.0,
+      "metaplanet_chg_pct": 4.62,
+      "btc_jpy": 10368695,
+      "btc_chg_pct": null,
+      "note": "初期データ（2026-07-12にweb検索で取得した参考値。以後daily-checkが毎日更新）"
+    }
+  ]
+}

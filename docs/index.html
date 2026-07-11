@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>RefF Routines ダッシュボード</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+    --s-unicharm: #3987e5;
+    --s-metaplanet: #199e70;
+    --s-btc: #c98500;
+    --up: #0ca30c;
+    --down: #e66767;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", "BIZ UDPGothic", sans-serif;
+    line-height: 1.6;
+    padding: 16px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  header { margin: 8px 0 20px; }
+  h1 { font-size: 1.25rem; font-weight: 700; }
+  .updated { color: var(--muted); font-size: 0.8rem; }
+  h2 {
+    font-size: 0.95rem; font-weight: 700; color: var(--ink-2);
+    margin: 28px 0 10px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--baseline);
+  }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .tile .name { font-size: 0.78rem; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+  .tile .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .tile .value { font-size: 1.45rem; font-weight: 700; margin-top: 2px; }
+  .tile .unit { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+  .tile .delta { font-size: 0.8rem; margin-top: 2px; }
+  .delta.up { color: var(--up); }
+  .delta.down { color: var(--down); }
+  .delta.flat { color: var(--muted); }
+  .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px 8px;
+  }
+  .chart-card .title { font-size: 0.78rem; color: var(--ink-2); margin-bottom: 4px; }
+  .chart-wrap { position: relative; height: 180px; }
+  .news-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
+    display: flex; gap: 12px;
+  }
+  .news-date { color: var(--muted); font-size: 0.75rem; white-space: nowrap; padding-top: 2px; }
+  .news-title { font-size: 0.88rem; font-weight: 600; }
+  .news-title a { color: var(--ink); text-decoration: none; }
+  .news-title a:hover { text-decoration: underline; }
+  .news-summary { font-size: 0.8rem; color: var(--ink-2); }
+  .news-source { font-size: 0.72rem; color: var(--muted); }
+  .task {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 0.72rem; padding: 2px 10px; border-radius: 999px;
+    border: 1px solid var(--border); white-space: nowrap;
+  }
+  .badge.todo { color: var(--muted); }
+  .badge.doing { color: #c98500; border-color: #c98500; }
+  .badge.done { color: var(--up); border-color: var(--up); }
+  .task .t-title { font-size: 0.88rem; flex: 1; min-width: 180px; }
+  .task.is-done .t-title { color: var(--muted); text-decoration: line-through; }
+  .task .t-due { font-size: 0.75rem; color: var(--muted); }
+  .task .t-notes { font-size: 0.75rem; color: var(--muted); width: 100%; }
+  details { margin-top: 12px; }
+  summary { cursor: pointer; color: var(--ink-2); font-size: 0.85rem; }
+  .table-wrap { overflow-x: auto; margin-top: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
+  th, td {
+    padding: 6px 10px; text-align: right; white-space: nowrap;
+    border-bottom: 1px solid var(--grid);
+    font-variant-numeric: tabular-nums;
+  }
+  th { color: var(--muted); font-weight: 600; }
+  td:first-child, th:first-child { text-align: left; }
+  .error {
+    background: var(--surface); border: 1px solid var(--down);
+    border-radius: 10px; padding: 14px; color: var(--down); font-size: 0.85rem;
+  }
+  footer { margin-top: 32px; color: var(--muted); font-size: 0.72rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>RefF Routines ダッシュボード</h1>
+  <div class="updated" id="updated">読み込み中…</div>
+</header>
+
+<div id="error-box"></div>
+
+<h2>📊 投資動向</h2>
+<div class="tiles" id="tiles"></div>
+<div class="charts" style="margin-top:10px">
+  <div class="chart-card"><div class="title">ユニ・チャーム (8113) 円</div><div class="chart-wrap"><canvas id="chart-unicharm"></canvas></div></div>
+  <div class="chart-card"><div class="title">メタプラネット (3350) 円</div><div class="chart-wrap"><canvas id="chart-metaplanet"></canvas></div></div>
+  <div class="chart-card"><div class="title">BTC/JPY 万円</div><div class="chart-wrap"><canvas id="chart-btc"></canvas></div></div>
+</div>
+<details>
+  <summary>履歴テーブルを表示</summary>
+  <div class="table-wrap"><table id="history-table"></table></div>
+</details>
+
+<h2>🔄 RefF関連ニュース（直近5件）</h2>
+<div id="news"></div>
+
+<h2>🏠 家庭タスク</h2>
+<div id="tasks"></div>
+
+<footer>データは docs/data/*.json（Routineが自動更新）。株価・BTC価格はweb検索ベースの参考値。</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
