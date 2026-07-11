@@ -25,8 +25,10 @@ reff-routines/
 ```
 
 - ダッシュボードURL: https://chaouver.github.io/reff-routines/
-- リポジトリはPrivate（GitHub Proのため Private でも Pages 公開可）。
-  Pages自体はURLを知っていれば誰でも閲覧できる点に留意。
+- リポジトリは**Public**（GitHub無料プランのため。PagesはPublicのみ対応）
+- **プライバシールール（Publicのため厳守）**：`household.json` をはじめ全ファイルに
+  住所・電話番号・具体的な金額（年収・控除枠の実額等）・家族の個人名を書かない。
+  タスク名は「ふるさと納税の寄付先選定」程度の粒度にとどめる。
 
 ## データ形式ルール（Routineはこれを厳守すること）
 
