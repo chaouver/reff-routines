@@ -10,6 +10,16 @@
       "btc_jpy": 10368695,
       "btc_chg_pct": null,
       "note": "初期データ（2026-07-12にweb検索で取得した参考値。以後daily-checkが毎日更新）"
+    },
+    {
+      "date": "2026-07-12",
+      "unicharm": 943.0,
+      "unicharm_chg_pct": 0,
+      "metaplanet": 249.0,
+      "metaplanet_chg_pct": 0,
+      "btc_jpy": 10518997,
+      "btc_chg_pct": 2.1,
+      "note": "市場休場（日曜）。株価は前営業日(7/10)終値を継続。BTCはweb検索時点(みんかぶ)の値"
     }
   ]
 }
